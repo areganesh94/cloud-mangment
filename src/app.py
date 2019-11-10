@@ -1,22 +1,34 @@
-import pdb, logging
+import logging
 
 from config import init_app_config
 from flask import Flask
 from flask_log_request_id import RequestID
-from flask_sqlalchemy import SQLAlchemy
+from database import SQLAlchemy
+from blueprint import RegisterApp
 
 logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
 db = SQLAlchemy()
 
+
+
 def setup(app, **kwargs):
-	RequestID(app)
-	init_app_config(app, **kwargs)
-	# pdb.set_trace()
+    global db
+    RequestID(app)
+    init_app_config(app, **kwargs)
+    RegisterApp(app.config['APPS'])
+    return app
 
-	return app
 
+@app.route('/healthcheck')
+def healthcheck():
+    return "OK"
+
+
+@app.route('/version')
+def version():
+    return app.config.get('VERSION', '0.0.0')
 
 
 if __name__ == "__main__":
@@ -30,6 +42,19 @@ if __name__ == "__main__":
     parser.add_argument('-D', '--debug', type=bool,
                         default=True, help="Debug mode")
     args = parser.parse_args()
-    app.url_map.strict_slashes = False
     application = setup(app, **os.environ)
+    if application.debug:
+        print(app.url_map)
     application.run(host=args.host, port=args.port, debug=args.debug)
+
+
+
+
+
+
+
+
+
+
+
+
