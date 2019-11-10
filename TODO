@@ -1,0 +1,5 @@
+ UserWarning: Neither SQLALCHEMY_DATABASE_URI nor SQLALCHEMY_BINDS is set. Defaulting SQLALCHEMY_DATABASE_URI to "sqlite:///:memory:".
+  'Neither SQLALCHEMY_DATABASE_URI nor SQLALCHEMY_BINDS is set. '
+
+/home/sganesh/Desktop/workspace/RL/cloud-mangment/venv/lib/python3.5/site-packages/flask_sqlalchemy/__init__.py:835: FSADeprecationWarning: SQLALCHEMY_TRACK_MODIFICATIONS adds significant overhead and will be disabled by default in the future.  Set it to True or False to suppress this warning.
+  'SQLALCHEMY_TRACK_MODIFICATIONS adds significant overhead and '

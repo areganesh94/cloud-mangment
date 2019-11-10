@@ -47,15 +47,3 @@ if __name__ == "__main__":
     if application.debug:
         print(app.url_map)
     application.run(host=args.host, port=args.port, debug=args.debug)
-
-
-
-
-
-
-
-
-
-
-
-

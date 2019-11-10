@@ -30,7 +30,6 @@ class RegisterApp:
     def get_app_path(self, app_name):
         return app_name.replace('.','/')
 
-
     def get_app_modules(self, app_path):
         return [pkg[1] for pkg in pkgutil.iter_modules([app_path]) if pkg[2] == True]
 
