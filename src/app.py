@@ -15,6 +15,7 @@ db = SQLAlchemy()
 
 def setup(app, **kwargs):
     global db
+    db.init_app(app)
     RequestID(app)
     init_app_config(app, **kwargs)
     RegisterApp(app.config['APPS'])
