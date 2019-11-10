@@ -5,6 +5,11 @@ from flask_log_request_id import RequestIDLogFilter
 logger = logging.getLogger(__name__)
 
 
+def mock_up_user():
+    from api.models import user
+    # total_user = user.count()
+
+
 def init_logging(**kwargs):
     logging.basicConfig(level=kwargs.get('LOG_LEVEL', 'INFO'), stream=sys.stderr)
     for handler in logging.getLogger().handlers:
@@ -21,4 +26,5 @@ def init_app_config(app, **kwargs):
     app.config['SQLALCHEMY_POOL_PRE_PING'] = True
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.debug = kwargs['DEBUG']
-    logger.info('Basic Requirments Set')
+    logger.info('Basic Requirements Set')
+    mock_up_user()
