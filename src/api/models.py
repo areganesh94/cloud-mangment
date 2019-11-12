@@ -1,4 +1,8 @@
+import uuid
+import logging
 from app import db
+
+logger = logging.getLogger(__name__)
 
 instance_type = {
     'micro': 1,
@@ -11,6 +15,18 @@ class user(db.Model):
     user_external_id = db.Column(db.String(36), unique=True)
     __tablename__ = 'users'
 
+    @classmethod
+    def create_user(cls, name):
+        try:
+            user_obj = user(name=name, user_external_id=str(uuid.uuid4()))
+            db.session.add(user_obj)
+            db.session.commit()
+            return True
+        except Exception as error:
+            db.session.rollback()
+            logger.error('user.create_one of name=%s and exc_class=%s, msg=%s' % name, error.__class__.__name__,
+                         str(error))
+            return False
 
 class cluster(db.Model):
     id = db.Column(db.Integer(), primary_key=True)

@@ -3,3 +3,17 @@
 
 /home/sganesh/Desktop/workspace/RL/cloud-mangment/venv/lib/python3.5/site-packages/flask_sqlalchemy/__init__.py:835: FSADeprecationWarning: SQLALCHEMY_TRACK_MODIFICATIONS adds significant overhead and will be disabled by default in the future.  Set it to True or False to suppress this warning.
   'SQLALCHEMY_TRACK_MODIFICATIONS adds significant overhead and '
+
+
+
+
+
+Curls 
+
+TO Create User
+
+curl -X POST \
+  http://localhost:5000/api/profile/ \
+  -H 'Content-Type: application/json' \
+  -H 'cache-control: no-cache' \
+  -d '{"name":"sri ganesh"}'

@@ -6,11 +6,11 @@ from flask_restful import Api
 
 logger = logging.getLogger(__name__)
 
-class RegisterApp:
+class RegisterBlueprint:
 
     def __init__(self, sub_apps):
         self.app_list = sub_apps
-        self._auto_discover_blueprints()
+        self.blueprint = self._auto_discover_blueprints()
 
     def _auto_discover_blueprints(self):
         blueprints = []
@@ -37,8 +37,8 @@ class RegisterApp:
         blueprint = Blueprint(self.get_blueprint_name(app_name, module_name), self.get_module_import_name(app_name, module_name, 'views'))
         api = Api(blueprint, prefix=self.get_api_path_prefix(self.get_app_path(app_name), module_name))
         url_module = import_module(self.get_module_import_name(app_name, module_name, 'urls'))
-        for view,urls in url_module.urls.items():
-            api.add_resource(view, *urls)        
+        for views,urls in url_module.urls.items():
+            api.add_resource(views, *urls)
         return blueprint
 
     def get_blueprint_name(self, app_name, module_name):

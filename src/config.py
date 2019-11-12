@@ -16,7 +16,7 @@ def init_logging(**kwargs):
 def init_app_config(app, **kwargs):
     app.config['VERSION'] = kwargs.get('VERSION', '0.0.0')
     init_logging(**kwargs)
-    app.config['APPS'] = ['apis']
+    app.config['APPS'] = ['api']
     app.config['SQLALCHEMY_DATABASE_URI'] = kwargs['DATABASE_URL']
     app.config['SQLALCHEMY_POOL_PRE_PING'] = True
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
