@@ -10,10 +10,83 @@
 
 Curls 
 
-TO Create User
+Method: POST
+http://localhost:5000/api/profile/
+{"name":"Hai there"}
 
 curl -X POST \
   http://localhost:5000/api/profile/ \
+  -H 'Accept: */*' \
+  -H 'Accept-Encoding: gzip, deflate' \
+  -H 'Cache-Control: no-cache' \
+  -H 'Connection: keep-alive' \
+  -H 'Content-Length: 20' \
   -H 'Content-Type: application/json' \
+  -H 'Host: localhost:5000' \
+  -H 'Postman-Token: 02f889dc-3a88-48a4-9b1b-113a80d14cf7,03ddde28-b4db-4867-aaad-b8afa2988a3d' \
+  -H 'User-Agent: PostmanRuntime/7.19.0' \
   -H 'cache-control: no-cache' \
-  -d '{"name":"sri ganesh"}'
+  -d '{"name":"Hai there"}'
+
+
+Method: GET
+Get all Clusters by created user
+http://localhost:5000/api/cluster/a9bae63a-7f62-4566-94b6-8a9616a3ba42
+curl -X GET http://localhost:5000/api/cluster/a9bae63a-7f62-4566-94b6-8a9616a3ba42
+
+Method: POST
+Cluster Creation (user_id)
+http://localhost:5000/api/cluster/a9bae63a-7f62-4566-94b6-8a9616a3ba42
+{'cluster_name':'foo', 'cluster_region':'bar'}
+
+curl -X POST \
+  http://localhost:5000/api/cluster/a9bae63a-7f62-4566-94b6-8a9616a3ba42 \
+  -H 'Accept: */*' \
+  -H 'Accept-Encoding: gzip, deflate' \
+  -H 'Cache-Control: no-cache' \
+  -H 'Connection: keep-alive' \
+  -H 'Content-Length: 46' \
+  -H 'Content-Type: application/json' \
+  -H 'Host: localhost:5000' \
+  -H 'Postman-Token: 54722042-9b70-4b5d-97cc-0d75aa03de00,8bcedfbf-e36c-4a67-b0cf-a39a7bcdd2aa' \
+  -H 'User-Agent: PostmanRuntime/7.19.0' \
+  -H 'cache-control: no-cache' \
+  -d '{"cluster_name":"foo", "cluster_region":"bar"}'
+
+Method: PUT
+Cluster Updation (cluster_id)
+http://localhost:5000/api/cluster/update/5182883c-2379-4684-852b-dc3e7539ea19
+{"cluster_name":"foofoo", "cluster_region":"barbar"}
+
+curl -X PUT \
+  http://localhost:5000/api/cluster/update/5182883c-2379-4684-852b-dc3e7539ea19 \
+  -H 'Accept: */*' \
+  -H 'Accept-Encoding: gzip, deflate' \
+  -H 'Cache-Control: no-cache' \
+  -H 'Connection: keep-alive' \
+  -H 'Content-Length: 52' \
+  -H 'Content-Type: application/json' \
+  -H 'Host: localhost:5000' \
+  -H 'Postman-Token: 3a19a7e7-37d0-481c-907a-b4fd7619b065,dbe9f99e-fef4-4cc5-b3aa-65d4e270d241' \
+  -H 'User-Agent: PostmanRuntime/7.19.0' \
+  -H 'cache-control: no-cache' \
+  -d '{"cluster_name":"foofoo", "cluster_region":"barbar"}'
+
+
+
+Method: Delete
+cluster delete (cluster_id)
+http://localhost:5000/api/cluster/delete/5182883c-2379-4684-852b-dc3e7539ea19
+
+curl -X DELETE \
+  http://localhost:5000/api/cluster/delete/5182883c-2379-4684-852b-dc3e7539ea19 \
+  -H 'Accept: */*' \
+  -H 'Accept-Encoding: gzip, deflate' \
+  -H 'Cache-Control: no-cache' \
+  -H 'Connection: keep-alive' \
+  -H 'Content-Length: 0' \
+  -H 'Content-Type: application/json' \
+  -H 'Host: localhost:5000' \
+  -H 'Postman-Token: 4b6911c0-5393-41e8-b27b-1984a6e7114a,92021843-d353-4a3a-b933-4f3e70c2a081' \
+  -H 'User-Agent: PostmanRuntime/7.19.0' \
+  -H 'cache-control: no-cache'

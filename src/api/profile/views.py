@@ -10,11 +10,14 @@ logger = logging.getLogger(__name__)
 class AddProfileUser(Resource):
 
 	def post(self):
+		# req: { "name": "foo"}
 		try:
 			data = request.get_json()
-			is_created = UserDBM.create_user(data['name'])
-			response = ('User Created Successfully', 201) if is_created else ('User Not Created Successfully', 503)
-			return response
+			response, code = UserDBM.create_user(data['name'])
+			return response, code
 		except BadRequest:
 			logger.error('AddProfileUser.post got bad request for args=%s' % request.data)
 			return "POST Params cannot be identified", 400
+		except KeyError:
+			logger.error('AddProfileUser.post got bad request since key not present for args=%s' % request.data)
+			return "POST Params name key missing.", 400
