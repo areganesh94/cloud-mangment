@@ -4,3 +4,7 @@ instance/
 .webassets-cache
 venv/
 .idea/
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfplan

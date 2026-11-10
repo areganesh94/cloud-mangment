@@ -1,0 +1,86 @@
+name: Terraform
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "infra/**"
+      - ".github/workflows/terraform.yml"
+  push:
+    branches: [main]
+    paths:
+      - "infra/**"
+      - ".github/workflows/terraform.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: read
+
+concurrency:
+  group: terraform-production
+  cancel-in-progress: false
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.10.5
+      - name: Check formatting
+        run: terraform fmt -check -recursive infra
+      - name: Initialize providers
+        run: terraform -chdir=infra init -backend=false -input=false
+      - name: Validate configuration
+        run: terraform -chdir=infra validate
+
+  plan-or-apply:
+    needs: validate
+    if: (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) && (github.event_name != 'workflow_dispatch' || github.ref == 'refs/heads/main')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+      pull-requests: read
+    env:
+      AWS_REGION: ${{ vars.AWS_REGION || 'us-east-1' }}
+      TF_VAR_aws_region: ${{ vars.AWS_REGION || 'us-east-1' }}
+      TF_VAR_name: ${{ vars.TF_NAME || 'cloud-management' }}
+      TF_VAR_deploy_app_service: ${{ vars.TF_DEPLOY_APP_SERVICE || 'false' }}
+      TF_VAR_vpc_id: ${{ vars.TF_VPC_ID || '' }}
+      TF_VAR_subnet_ids: ${{ vars.TF_SUBNET_IDS || '[]' }}
+      TF_VAR_container_image: ${{ vars.TF_CONTAINER_IMAGE || '' }}
+      TF_VAR_database_url_secret_arn: ${{ vars.TF_DATABASE_URL_SECRET_ARN || '' }}
+      TF_VAR_allowed_ingress_cidrs: ${{ vars.TF_ALLOWED_INGRESS_CIDRS || '[]' }}
+      TF_VAR_assign_public_ip: ${{ vars.TF_ASSIGN_PUBLIC_IP || 'false' }}
+      TF_VAR_desired_count: ${{ vars.TF_DESIRED_COUNT || '1' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.10.5
+      - name: Configure AWS credentials with OIDC
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ github.event_name == 'pull_request' && vars.TF_PLAN_ROLE_ARN || vars.TF_APPLY_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+      - name: Initialize remote state
+        env:
+          TF_STATE_BUCKET: ${{ vars.TF_STATE_BUCKET }}
+        run: |
+          test -n "$TF_STATE_BUCKET" || { echo "TF_STATE_BUCKET is required"; exit 1; }
+          terraform -chdir=infra init -input=false \
+            -backend-config="bucket=$TF_STATE_BUCKET" \
+            -backend-config="key=cloud-management/terraform.tfstate" \
+            -backend-config="region=$AWS_REGION" \
+            -backend-config="use_lockfile=true"
+      - name: Create Terraform plan
+        if: github.event_name == 'pull_request'
+        run: terraform -chdir=infra plan -input=false -no-color
+      - name: Apply Terraform
+        if: github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main')
+        run: |
+          terraform -chdir=infra plan -input=false -out=tfplan
+          terraform -chdir=infra apply -input=false -auto-approve tfplan
