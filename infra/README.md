@@ -11,9 +11,9 @@ Use GitHub Actions OIDC, not long-lived AWS access keys. Configure an AWS
 account OIDC provider for `token.actions.githubusercontent.com` and two IAM
 roles:
 
-- The plan role should trust this repository's `pull_request` subject and have
-  read-only infrastructure permissions plus access to read and lock the
-  Terraform state object.
+- The plan role should trust this repository's `pull_request` and
+  `ref:refs/heads/main` subjects and have read-only infrastructure permissions
+  plus access to read and lock the Terraform state object.
 - The apply role should trust only
   `repo:OWNER/REPOSITORY:ref:refs/heads/main` and have the permissions needed
   to manage this stack and its state.
@@ -25,10 +25,12 @@ Configure these GitHub Actions repository variables:
 - `AWS_REGION`: optional; defaults to `us-east-1`.
 
 The workflow validates every pull request. Same-repository pull requests also
-run a Terraform plan; fork pull requests do not receive AWS credentials. Merges
-to `main` apply the configuration. The S3 bucket must exist before the first
-workflow run because Terraform cannot create the backend that stores its own
-state.
+run a Terraform plan; fork pull requests do not receive AWS credentials. PRs
+plan against the `dev` state. Merges to `main` apply to the `prd` state. A
+manual run on `main` plans against the selected environment and applies only
+when `Run apply after plan` is enabled. The S3 bucket must exist before the
+first workflow run because Terraform cannot create the backend that stores its
+own state.
 
 ## Enabling the app service
 
